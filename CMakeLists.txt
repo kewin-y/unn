@@ -23,12 +23,6 @@ set(SOURCE_FILES
   src/ReLU.cpp
   src/Softmax.cpp
   src/Loss_CCE.cpp
-
-  src/Layer_Dense.hpp
-  src/main.hpp
-  src/ReLU.hpp
-  src/Softmax.hpp
-  src/Loss_CCE.hpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
