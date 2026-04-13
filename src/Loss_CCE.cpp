@@ -1,11 +1,10 @@
-#include "Loss_CCE.hpp"
-#include "Eigen/Core"
-#include <iostream>
-#include <string>
+#include <unn/Loss_CCE.hpp>
+
+#include <cassert>
 
 // Clamps each entry in `mat` between 1e-7 and 1 - 1e-7
 // and takes the natural logarithm of each entry
-static Eigen::MatrixXd clip_log(const Eigen::MatrixXd &mat)
+Eigen::MatrixXd clip_log(const Eigen::MatrixXd &mat)
 {
   return mat.cwiseMax(1e-7).cwiseMin(1 - 1e-7).array().log();
 }
@@ -25,7 +24,7 @@ Eigen::VectorXd Loss_CCE::operator()(const Eigen::MatrixXd &y_pred, const Eigen:
 
   Eigen::VectorXd neg_result(y.rows());
 
-  for (int i = 0; i < neg_result.rows(); i++) {
+  for (Eigen::Index i = 0; i < neg_result.rows(); ++i) {
     neg_result(i) = y_pred_clip_log(y(i), i);
   }
 

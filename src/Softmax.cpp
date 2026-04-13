@@ -1,5 +1,4 @@
-#include "Softmax.hpp"
-#include "Eigen/Core"
+#include <unn/Softmax.hpp>
 
 namespace unn
 {

@@ -1,14 +1,14 @@
-#ifndef RELU_HPP
-#define RELU_HPP
+#ifndef UNN_SOFTMAX_HPP
+#define UNN_SOFTMAX_HPP
 
 #include <Eigen/Core>
 
 namespace unn
 {
-struct ReLU {
-  ReLU() = default;
+struct Softmax {
+  Softmax() = default;
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) const;
 };
 } // namespace unn
 
-#endif // !RELU_HPP
+#endif // UNN_SOFTMAX_HPP
