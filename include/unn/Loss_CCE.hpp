@@ -5,16 +5,13 @@
 
 namespace unn
 {
-class Loss_CCE
+struct Loss_CCE
 {
-public:
   Loss_CCE() = default;
 
-  Eigen::VectorXd operator()(const Eigen::MatrixXd &y_pred,
-                             const Eigen::VectorXi &y) const;
+  Eigen::VectorXd operator()(const Eigen::MatrixXd &y_pred, const Eigen::VectorXi &y) const;
 
-  Eigen::VectorXd operator()(const Eigen::MatrixXd &y_pred,
-                             const Eigen::MatrixXd &y) const;
+  Eigen::VectorXd operator()(const Eigen::MatrixXd &y_pred, const Eigen::MatrixXd &y) const;
 };
 } // namespace unn
 
