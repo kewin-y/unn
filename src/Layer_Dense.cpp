@@ -29,6 +29,8 @@ Eigen::MatrixXd Layer_Dense::operator()(const Eigen::MatrixXd &inputs)
 
   in = inputs;
 
+  // shape(outputs) = (n_out, n_samples)
+  // n_out becomes number of inputs for next layer
   return outputs;
 }
 } // namespace unn

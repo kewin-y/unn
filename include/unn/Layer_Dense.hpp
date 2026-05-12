@@ -6,11 +6,12 @@
 namespace unn
 {
 struct Layer_Dense {
-  const Eigen::Index n_in;
-  const Eigen::Index n_out;
+  const Eigen::Index n_in; // Number of inputs (features)
+  const Eigen::Index n_out; // Number of output neurons
   const Eigen::Index n_samples; // Batch size
 
   // Each row of `weights` represents the weights for a specific output neuron
+  // shape(weights) = (n_out, n_in)
   Eigen::MatrixXd weights;
 
   // Each entry b_i of `biases` corresponds to the bias of neuron `i`
@@ -18,6 +19,7 @@ struct Layer_Dense {
 
   Layer_Dense(Eigen::Index n_in, Eigen::Index n_out, Eigen::Index n_samples);
 
+  // shape(inputs) = (n_in, n_samples).
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs);
 
 private:

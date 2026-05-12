@@ -7,6 +7,8 @@ namespace unn
 {
 struct Softmax {
   Softmax() = default;
+
+  // shape(inputs) = (features, sample)
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) const;
 };
 } // namespace unn
