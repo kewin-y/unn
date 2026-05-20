@@ -1,13 +1,22 @@
 #ifndef UNN_RELU_HPP
 #define UNN_RELU_HPP
 
+#include "unn/Layer.hpp"
 #include <Eigen/Core>
 
 namespace unn
 {
-struct ReLU {
+struct ReLU : Layer {
   ReLU() = default;
-  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) const;
+  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs);
+  void backward(const Eigen::MatrixXd &d_next) override;
+
+private:
+  // Forward Pass
+  Eigen::MatrixXd in;
+
+  // Backward Pass
+  Eigen::MatrixXd d_in;
 };
 } // namespace unn
 
