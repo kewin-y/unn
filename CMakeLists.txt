@@ -33,7 +33,6 @@ add_library(unn
   src/Layer_Dense.cpp
   src/ReLU.cpp
   src/Softmax.cpp
-  src/Loss_CCE.cpp
 )
 
 add_library(unn::unn ALIAS unn)
