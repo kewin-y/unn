@@ -7,6 +7,7 @@ namespace unn
 {
 struct Layer {
   virtual void backward(const Eigen::MatrixXd &d_next);
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs);
 };
 } // namespace unn
 

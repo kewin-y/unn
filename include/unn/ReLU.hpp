@@ -9,7 +9,7 @@ namespace unn
 struct ReLU : Layer {
   ReLU() = default;
 
-  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs);
+  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:

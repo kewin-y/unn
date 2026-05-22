@@ -10,7 +10,7 @@ struct Layer_Dense : Layer {
 
   Layer_Dense(Eigen::Index n_in, Eigen::Index n_out, Eigen::Index n_samples);
 
-  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs);
+  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:

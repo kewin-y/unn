@@ -21,7 +21,7 @@ struct Loss_CCE : Layer {
   Loss_CCE(const TargetType &targets);
 
   // TODO: override this
-  Eigen::MatrixXd operator()(const Eigen::MatrixXd &predictions);
+  Eigen::MatrixXd operator()(const Eigen::MatrixXd &predictions) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:
@@ -29,6 +29,11 @@ private:
   const TargetType y_true; // sparse -> shape(y_true) = (1, n_samples)
                            // one hot -> shape(y_true) = (n_classes, n_samples)
   Eigen::MatrixXd y_pred;  // shape(y_pred) = (n_classes, n_samples)
+                           //
+  // Backward pass
+  Eigen::MatrixXd d_y_pred;
+
+  double average_loss;
 
   template <typename>
   struct always_false : std::false_type {
@@ -60,7 +65,7 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
       losses(0, i) = -y_pred_clip_log(y_true(i), i);
     }
 
-    // TODO: Calculate Average Loss
+    average_loss = losses.mean();
 
     return losses;
 
@@ -74,13 +79,13 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
 
     const auto y_pred_clip_log = clip_log(y_pred);
 
-    // TODO: Calculate Average Loss
-
     // This code opts for element-wise operations.
-    // Doing matrix dot product in: -(y_true * y_pred_clip_log).diagonal();
+    // Doing matrix product in: -(y_true * y_pred_clip_log).diagonal();
     // wastes a lot of computation b/c non-diagonal
     // entries are calculated for no reason
     Eigen::MatrixXd losses = -(y_true.array() * y_pred_clip_log.array()).colwise().sum();
+
+    average_loss = losses.mean();
 
     return losses;
 
@@ -91,7 +96,35 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
   }
 }
 
-// void backward(const Eigen::MatrixXd &d_next) override;
+template <typename TargetType>
+void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
+{
+  if constexpr (std::is_same_v<TargetType, Eigen::RowVectorXi>) {
+    // BEGIN ASSERTIONS
+
+    const bool valid_d_next_shape = d_next.rows() == y_pred.rows() &&
+                                    d_next.cols() == y_pred.cols();
+
+    assert(((valid_d_next_shape) && "d_next has invalid shape"));
+    // END ASSERTIONS
+
+    Eigen::MatrixXd one_hot(y_pred.rows(), y_pred.cols());
+    one_hot.setZero();
+
+    for (Eigen::Index i; i < y_pred.cols(); ++i) {
+      one_hot(y_true(i), i) = 1;
+    }
+
+    d_y_pred = -(one_hot.array() / y_pred.array()) * d_next.array();
+    return;
+  } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
+    d_y_pred = -(y_true.array() / y_pred.array()) * d_next.array();
+  } else {
+    static_assert(
+        always_false<TargetType>::value,
+        "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
+  }
+};
 } // namespace unn
 
 #endif
