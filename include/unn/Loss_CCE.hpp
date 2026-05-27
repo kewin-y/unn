@@ -20,21 +20,22 @@ template <typename TargetType>
 struct Loss_CCE : Layer {
   Loss_CCE(const TargetType &targets);
 
-  // TODO: override this
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &predictions) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:
-  // Forward Pass
+  // FORWARD PASS
   const TargetType y_true; // sparse -> shape(y_true) = (1, n_samples)
                            // one hot -> shape(y_true) = (n_classes, n_samples)
+
   Eigen::MatrixXd y_pred;  // shape(y_pred) = (n_classes, n_samples)
-                           //
-  // Backward pass
+
+  // BACKWARD PASS
   Eigen::MatrixXd d_y_pred;
 
   double average_loss;
 
+  // Helper for static_assert
   template <typename>
   struct always_false : std::false_type {
   };
@@ -46,16 +47,14 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
   y_pred = predictions;
 
   if constexpr (std::is_same_v<TargetType, Eigen::RowVectorXi>) {
-    // ASSERTIONS
+    // ========== ASSERTIONS ==========
     const bool valid_y_pred_rows = y_pred.cols() == y_true.cols();
-    assert(((valid_y_pred_rows) &&
-            "mismatch in column size between y_pred and y_true"));
+    assert(((valid_y_pred_rows) && "mismatch in column length between y_pred and y_true"));
 
     const bool valid_y_true_range = y_true.minCoeff() >= 0 &&
                                     y_true.maxCoeff() < y_pred.rows();
-    assert(((valid_y_true_range) &&
-            "invalid range of values exist in y"));
-    // END ASSERTIONS
+    assert(((valid_y_true_range) && "invalid range of values exist in y"));
+    // ========== END ASSERTIONS ==========
 
     const auto y_pred_clip_log = clip_log(y_pred);
 
@@ -70,12 +69,11 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
     return losses;
 
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
-    // ASSERTIONS
+    // ========== ASSERTIONS ==========
     const bool valid_y_pred_shape = y_pred.rows() == y_true.rows() &&
                                     y_pred.cols() == y_true.cols();
-    assert(((valid_y_pred_shape) &&
-            "mismatch in shape between y_pred and y"));
-    // END ASSERTIONS
+    assert(((valid_y_pred_shape) && "mismatch in shape between y_pred and y"));
+    // ========== END ASSERTIONS ==========
 
     const auto y_pred_clip_log = clip_log(y_pred);
 
@@ -118,6 +116,13 @@ void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
     d_y_pred = -(one_hot.array() / y_pred.array()) * d_next.array();
     return;
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
+    // ========== BEGIN ASSERTIONS ==========
+    const bool valid_d_next_shape = d_next.rows() == 1 &&
+                                    d_next.cols() == y_pred.cols();
+
+    assert(((valid_d_next_shape) && "d_next has invalid shape"));
+    // ========== END ASSERTIONS ==========
+
     d_y_pred = -(y_true.array() / y_pred.array()) * d_next.array();
   } else {
     static_assert(

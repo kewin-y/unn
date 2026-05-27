@@ -2,7 +2,7 @@
 
 namespace unn
 {
-Eigen::MatrixXd Softmax::operator()(const Eigen::MatrixXd &inputs) const
+Eigen::MatrixXd Softmax::operator()(const Eigen::MatrixXd &inputs)
 {
   // Column vector containing the maximum input of each sample
   Eigen::RowVectorXd maxes = inputs.colwise().maxCoeff();

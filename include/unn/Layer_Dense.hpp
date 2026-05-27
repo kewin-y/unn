@@ -19,14 +19,13 @@ private:
   const Eigen::Index n_samples; // Batch size
 
   // FORWARD PASS
-  // Each row of `weights` represents the weights for a specific output neuron
-  // shape(weights) = (n_out, n_in)
-  Eigen::MatrixXd weights;
+  Eigen::MatrixXd weights; // Each row represents
+                           // the weights for a specific output neuron.
+                           // shape(weights) = (n_out, n_in)
 
   Eigen::VectorXd biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 
-  // shape(inputs) = (n_in, n_samples).
-  Eigen::MatrixXd in;
+  Eigen::MatrixXd in; // shape(inputs) = (n_in, n_samples)
 
   // BACKWARD PASS
   Eigen::MatrixXd d_in;
