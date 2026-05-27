@@ -9,14 +9,13 @@ namespace unn
 struct Softmax : Layer {
   Softmax() = default;
 
-  // shape(inputs) = (features, sample)
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:
 
   // FORWARD PASS
-  Eigen::MatrixXd in;
+  Eigen::MatrixXd out;
 
   // BACKWARD PASS
   Eigen::MatrixXd d_in;
