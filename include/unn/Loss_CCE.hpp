@@ -47,14 +47,14 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
   y_pred = predictions;
 
   if constexpr (std::is_same_v<TargetType, Eigen::RowVectorXi>) {
-    // ========== ASSERTIONS ==========
+    // ASSERTIONS
     const bool valid_y_pred_rows = y_pred.cols() == y_true.cols();
     assert(((valid_y_pred_rows) && "mismatch in column length between y_pred and y_true"));
 
     const bool valid_y_true_range = y_true.minCoeff() >= 0 &&
                                     y_true.maxCoeff() < y_pred.rows();
     assert(((valid_y_true_range) && "invalid range of values exist in y"));
-    // ========== END ASSERTIONS ==========
+    // END ASSERTIONS
 
     const auto y_pred_clip_log = clip_log(y_pred);
 
@@ -69,11 +69,11 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
     return losses;
 
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
-    // ========== ASSERTIONS ==========
+    // ASSERTIONS
     const bool valid_y_pred_shape = y_pred.rows() == y_true.rows() &&
                                     y_pred.cols() == y_true.cols();
-    assert(((valid_y_pred_shape) && "mismatch in shape between y_pred and y"));
-    // ========== END ASSERTIONS ==========
+    assert(((valid_y_pred_shape) && "predictions has invalid shape"));
+    // END ASSERTIONS
 
     const auto y_pred_clip_log = clip_log(y_pred);
 
@@ -99,7 +99,6 @@ void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
 {
   if constexpr (std::is_same_v<TargetType, Eigen::RowVectorXi>) {
     // BEGIN ASSERTIONS
-
     const bool valid_d_next_shape = d_next.rows() == y_pred.rows() &&
                                     d_next.cols() == y_pred.cols();
 
@@ -113,15 +112,16 @@ void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
       one_hot(y_true(i), i) = 1;
     }
 
+    // What the hell
+    // TODO: Fix this (i think it's wrong)
     d_y_pred = -(one_hot.array() / y_pred.array()) * d_next.array();
-    return;
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
-    // ========== BEGIN ASSERTIONS ==========
+    // BEGIN ASSERTIONS
     const bool valid_d_next_shape = d_next.rows() == 1 &&
                                     d_next.cols() == y_pred.cols();
 
     assert(((valid_d_next_shape) && "d_next has invalid shape"));
-    // ========== END ASSERTIONS ==========
+    // END ASSERTIONS
 
     d_y_pred = -(y_true.array() / y_pred.array()) * d_next.array();
   } else {

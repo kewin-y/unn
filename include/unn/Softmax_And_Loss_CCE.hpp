@@ -38,7 +38,37 @@ private:
 template <typename TargetType>
 Eigen::MatrixXd Softmax_And_Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &inputs)
 {
+  this->inputs = inputs;
   return loss_cce(softmax(inputs));
+}
+
+template <typename TargetType>
+void Softmax_And_Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
+{
+  if constexpr (std::is_same_v<TargetType, Eigen::RowVectorXi>) {
+    // BEGIN ASSERTIONS
+    const bool valid_d_next_shape = d_next.rows() == inputs.rows() &&
+                                    d_next.cols() && inputs.cols();
+    assert(((valid_d_next_shape) && "d_next has invalid shape"));
+    // END ASSERTIONS
+
+    Eigen::MatrixXd one_hot(inputs.rows(), inputs.cols());
+    one_hot.setZero();
+
+    for (Eigen::Index i; i < inputs.cols(); ++i) {
+      one_hot(y_true(i), i) = 1;
+    }
+
+    d_inputs = inputs.array() - one_hot.array();
+  } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
+    // ASSERTIONS
+    // TODO I think i messed something up
+    // END ASSERTIONS
+  } else {
+    static_assert(
+        always_false<TargetType>::value,
+        "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
+  }
 }
 
 } // namespace unn

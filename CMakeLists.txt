@@ -58,6 +58,7 @@ if(UNN_BUILD_EXAMPLES)
   target_link_libraries(unn_demo PRIVATE unn::unn)
 endif()
 
+# WTF?????
 write_basic_package_version_file(
   "${CMAKE_CURRENT_BINARY_DIR}/unnConfigVersion.cmake"
   VERSION ${PROJECT_VERSION}
