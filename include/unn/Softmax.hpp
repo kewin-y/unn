@@ -15,10 +15,10 @@ struct Softmax : Layer {
 private:
 
   // FORWARD PASS
-  Eigen::MatrixXd m_out;
+  Eigen::MatrixXd out;
 
   // BACKWARD PASS
-  Eigen::MatrixXd m_d_inputs;
+  Eigen::MatrixXd d_inputs;
 
 };
 } // namespace unn

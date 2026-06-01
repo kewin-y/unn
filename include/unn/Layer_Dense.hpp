@@ -14,23 +14,23 @@ struct Layer_Dense : Layer {
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:
-  const Eigen::Index m_n_in;      // Number of inputs (features)
-  const Eigen::Index m_n_out;     // Number of output neurons
-  const Eigen::Index m_n_samples; // Batch size
+  const Eigen::Index n_inputs;      // Number of inputs (features)
+  const Eigen::Index n_outputs;     // Number of output neurons
+  const Eigen::Index n_samples; // Batch size
 
   // FORWARD PASS
-  Eigen::MatrixXd m_weights; // Each row represents
+  Eigen::MatrixXd weights; // Each row represents
                              // the weights for a specific output neuron.
                              // shape(weights) = (n_out, n_in)
 
-  Eigen::VectorXd m_biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
+  Eigen::VectorXd biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 
-  Eigen::MatrixXd m_inputs; // shape(inputs) = (n_in, n_samples)
+  Eigen::MatrixXd inputs; // shape(inputs) = (n_in, n_samples)
 
   // BACKWARD PASS
-  Eigen::MatrixXd m_d_in;
-  Eigen::MatrixXd m_d_weights;
-  Eigen::MatrixXd m_d_biases;
+  Eigen::MatrixXd d_inputs;
+  Eigen::MatrixXd d_weights;
+  Eigen::MatrixXd d_biases;
 };
 } // namespace unn
 
