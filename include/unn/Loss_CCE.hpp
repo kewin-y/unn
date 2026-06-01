@@ -67,7 +67,6 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
     average_loss = losses.mean();
 
     return losses;
-
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
     // ASSERTIONS
     const bool valid_y_pred_shape = y_pred.rows() == y_true.rows() &&
@@ -86,7 +85,6 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
     average_loss = losses.mean();
 
     return losses;
-
   } else {
     static_assert(
         always_false<TargetType>::value,
@@ -113,8 +111,14 @@ void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
     }
 
     d_y_pred = (-(one_hot.array() / y_pred.array())).rowwise() * d_next.array();
+
+    // Normalize
+    d_y_pred /= y_pred.cols();
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
     d_y_pred = (-(y_true.array() / y_pred.array())).rowwise() * d_next.array();
+
+    // Normalize
+    d_y_pred /= y_pred.cols();
   } else {
     static_assert(
         always_false<TargetType>::value,
