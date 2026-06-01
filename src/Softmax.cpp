@@ -34,7 +34,7 @@ void Softmax::backward(const Eigen::MatrixXd &d_next)
   for (Eigen::Index j = 0; j < out.cols(); j++) {
     Eigen::MatrixXd jacobian = static_cast<Eigen::MatrixXd>(out.col(j).asDiagonal()) -
                                (out.col(j) * out.col(j).transpose());
-    d_in.col(j) = jacobian * out.col(j);
+    d_in.col(j) = jacobian * d_next.col(j);
   }
 }
 } // namespace unn
