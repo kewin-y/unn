@@ -23,11 +23,11 @@ Eigen::MatrixXd Softmax::operator()(const Eigen::MatrixXd &inputs)
 }
 void Softmax::backward(const Eigen::MatrixXd &d_next)
 {
-  // ========== BEGIN ASSERTIONS ==========
+  // BEGIN ASSERTIONS
   const bool valid_d_next_shape = d_next.rows() == m_out.rows() &&
                                   d_next.cols() == m_out.cols();
   assert(((valid_d_next_shape) && "d_next has invalid shape"));
-  // ========== END ASSERTIONS ==========
+  // END ASSERTIONS
 
   m_d_inputs.resize(m_out.rows(), m_out.cols());
 

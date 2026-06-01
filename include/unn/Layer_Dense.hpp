@@ -20,8 +20,8 @@ private:
 
   // FORWARD PASS
   Eigen::MatrixXd m_weights; // Each row represents
-                           // the weights for a specific output neuron.
-                           // shape(weights) = (n_out, n_in)
+                             // the weights for a specific output neuron.
+                             // shape(weights) = (n_out, n_in)
 
   Eigen::VectorXd m_biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 
