@@ -97,14 +97,14 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
 template <typename TargetType>
 void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
 {
+  // BEGIN ASSERTIONS
+  const bool valid_d_next_shape = d_next.rows() == 1 &&
+                                  d_next.cols() == y_pred.cols();
+
+  assert(((valid_d_next_shape) && "d_next has invalid shape"));
+  // END ASSERTIONS
+
   if constexpr (std::is_same_v<TargetType, Eigen::RowVectorXi>) {
-    // BEGIN ASSERTIONS
-    const bool valid_d_next_shape = d_next.rows() == y_pred.rows() &&
-                                    d_next.cols() == y_pred.cols();
-
-    assert(((valid_d_next_shape) && "d_next has invalid shape"));
-    // END ASSERTIONS
-
     Eigen::MatrixXd one_hot(y_pred.rows(), y_pred.cols());
     one_hot.setZero();
 
@@ -112,18 +112,9 @@ void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
       one_hot(y_true(i), i) = 1;
     }
 
-    // What the hell
-    // TODO: Fix this (i think it's wrong)
-    d_y_pred = -(one_hot.array() / y_pred.array()) * d_next.array();
+    d_y_pred = (-(one_hot.array() / y_pred.array())).rowwise() * d_next.array();
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
-    // BEGIN ASSERTIONS
-    const bool valid_d_next_shape = d_next.rows() == 1 &&
-                                    d_next.cols() == y_pred.cols();
-
-    assert(((valid_d_next_shape) && "d_next has invalid shape"));
-    // END ASSERTIONS
-
-    d_y_pred = -(y_true.array() / y_pred.array()) * d_next.array();
+    d_y_pred = (-(y_true.array() / y_pred.array())).rowwise() * d_next.array();
   } else {
     static_assert(
         always_false<TargetType>::value,
