@@ -14,10 +14,10 @@ struct ReLU : Layer {
 
 private:
   // Forward Pass
-  Eigen::MatrixXd in;
+  Eigen::MatrixXd m_inputs;
 
   // Backward Pass
-  Eigen::MatrixXd d_in;
+  Eigen::MatrixXd m_d_inputs;
 };
 } // namespace unn
 

@@ -14,35 +14,23 @@ struct Layer_Dense : Layer {
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:
-  const Eigen::Index n_in;      // Number of inputs (features)
-  const Eigen::Index n_out;     // Number of output neurons
-  const Eigen::Index n_samples; // Batch size
+  const Eigen::Index m_n_in;      // Number of inputs (features)
+  const Eigen::Index m_n_out;     // Number of output neurons
+  const Eigen::Index m_n_samples; // Batch size
 
   // FORWARD PASS
-  Eigen::MatrixXd weights; // Each row represents
+  Eigen::MatrixXd m_weights; // Each row represents
                            // the weights for a specific output neuron.
                            // shape(weights) = (n_out, n_in)
 
-  Eigen::VectorXd biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
+  Eigen::VectorXd m_biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 
-  Eigen::MatrixXd in; // shape(inputs) = (n_in, n_samples)
+  Eigen::MatrixXd m_inputs; // shape(inputs) = (n_in, n_samples)
 
   // BACKWARD PASS
-  Eigen::MatrixXd d_in;
-  Eigen::MatrixXd d_weights;
-  Eigen::MatrixXd d_biases;
-
-  // NOTE (hopefully im right im probably wrong)
-  // will need grad_in
-  // will need grad_weights
-  // will need grad_biases
-  // will need grad_next (gradient that comes in from the next layer; flows in during backpropagation)
-  // Assume grad_next is a matrix whose column vectors are gradient vectors corresponding to a sample
-  // i.e., shape(grad_next) = (n_out, n_samples)
-  //
-  // grad_in = weights^T * grad_next
-  // grad_weights = grad_next * inputs^T
-  // grad_biases = rowise sum of grad_next
+  Eigen::MatrixXd m_d_in;
+  Eigen::MatrixXd m_d_weights;
+  Eigen::MatrixXd m_d_biases;
 };
 } // namespace unn
 
