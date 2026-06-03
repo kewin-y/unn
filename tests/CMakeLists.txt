@@ -27,7 +27,12 @@ else()
   CPMAddPackage(NAME unn SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/..)
 endif()
 
-file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+# file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+set(sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/smoke.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/layer_dense.cpp
+)
 add_executable(${PROJECT_NAME} ${sources})
 target_link_libraries(${PROJECT_NAME} doctest::doctest unn::unn Eigen)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)

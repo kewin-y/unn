@@ -9,7 +9,7 @@ Layer_Dense::Layer_Dense(Eigen::Index n_inputs, Eigen::Index n_outputs, Eigen::I
 {
   // Intialize with random weights
   weights = Eigen::MatrixXd::Random(n_outputs, n_inputs);
-  biases = Eigen::VectorXd::Zero(n_outputs);
+  biases = Eigen::VectorXd::Random(n_outputs);
 }
 
 Layer_Dense::Layer_Dense(Eigen::Index n_inputs, Eigen::Index n_outputs, Eigen::Index n_samples,
