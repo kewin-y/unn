@@ -9,19 +9,21 @@ namespace unn
 struct Layer_Dense : Layer {
 
   Layer_Dense(Eigen::Index n_in, Eigen::Index n_out, Eigen::Index n_samples);
+  Layer_Dense(Eigen::Index n_in, Eigen::Index n_out, Eigen::Index n_samples, const Eigen::MatrixXd &weights,
+              const Eigen::VectorXd &biases);
 
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
 private:
-  const Eigen::Index n_inputs;      // Number of inputs (features)
-  const Eigen::Index n_outputs;     // Number of output neurons
+  const Eigen::Index n_inputs;  // Number of inputs (features)
+  const Eigen::Index n_outputs; // Number of output neurons
   const Eigen::Index n_samples; // Batch size
 
   // FORWARD PASS
   Eigen::MatrixXd weights; // Each row represents
-                             // the weights for a specific output neuron.
-                             // shape(weights) = (n_out, n_in)
+                           // the weights for a specific output neuron.
+                           // shape(weights) = (n_out, n_in)
 
   Eigen::VectorXd biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 

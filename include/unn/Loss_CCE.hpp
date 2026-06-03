@@ -16,8 +16,7 @@ inline Eigen::MatrixXd clip_log(const Eigen::MatrixXd &mat)
 
 namespace unn
 {
-template <typename TargetType>
-struct Loss_CCE : Layer {
+template <typename TargetType> struct Loss_CCE : Layer {
   Loss_CCE(const TargetType &targets) : targets(targets) {};
 
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &predictions) override;
@@ -36,13 +35,11 @@ private:
   double m_average_loss;
 
   // Helper for static_assert
-  template <typename>
-  struct always_false : std::false_type {
+  template <typename> struct always_false : std::false_type {
   };
 };
 
-template <typename TargetType>
-Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predictions)
+template <typename TargetType> Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predictions)
 {
   this->predictions = predictions;
 
@@ -51,8 +48,7 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
     const bool valid_y_pred_rows = predictions.cols() == targets.cols();
     assert(((valid_y_pred_rows) && "mismatch in column length between y_pred and y_true"));
 
-    const bool valid_y_true_range = targets.minCoeff() >= 0 &&
-                                    targets.maxCoeff() < predictions.rows();
+    const bool valid_y_true_range = targets.minCoeff() >= 0 && targets.maxCoeff() < predictions.rows();
     assert(((valid_y_true_range) && "invalid range of values exist in y"));
     // END ASSERTIONS
 
@@ -69,8 +65,7 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
     return losses;
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
     // ASSERTIONS
-    const bool valid_y_pred_shape = predictions.rows() == targets.rows() &&
-                                    predictions.cols() == targets.cols();
+    const bool valid_y_pred_shape = predictions.rows() == targets.rows() && predictions.cols() == targets.cols();
     assert(((valid_y_pred_shape) && "predictions has invalid shape"));
     // END ASSERTIONS
 
@@ -86,18 +81,15 @@ Eigen::MatrixXd Loss_CCE<TargetType>::operator()(const Eigen::MatrixXd &predicti
 
     return losses;
   } else {
-    static_assert(
-        always_false<TargetType>::value,
-        "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
+    static_assert(always_false<TargetType>::value,
+                  "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
   }
 }
 
-template <typename TargetType>
-void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
+template <typename TargetType> void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
 {
   // BEGIN ASSERTIONS
-  const bool valid_d_next_shape = d_next.rows() == 1 &&
-                                  d_next.cols() == predictions.cols();
+  const bool valid_d_next_shape = d_next.rows() == 1 && d_next.cols() == predictions.cols();
 
   assert(((valid_d_next_shape) && "d_next has invalid shape"));
   // END ASSERTIONS
@@ -120,9 +112,8 @@ void Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
     // Normalize
     d_predictions /= predictions.cols();
   } else {
-    static_assert(
-        always_false<TargetType>::value,
-        "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
+    static_assert(always_false<TargetType>::value,
+                  "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
   }
 };
 } // namespace unn

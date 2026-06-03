@@ -4,13 +4,18 @@
 
 namespace unn
 {
-Layer_Dense::Layer_Dense(Eigen::Index n_inputs, Eigen::Index n_outputs,
-                         Eigen::Index n_samples)
+Layer_Dense::Layer_Dense(Eigen::Index n_inputs, Eigen::Index n_outputs, Eigen::Index n_samples)
     : n_inputs{n_inputs}, n_outputs{n_outputs}, n_samples{n_samples}
 {
   // Intialize with random weights
   weights = Eigen::MatrixXd::Random(n_outputs, n_inputs);
   biases = Eigen::VectorXd::Zero(n_outputs);
+}
+
+Layer_Dense::Layer_Dense(Eigen::Index n_inputs, Eigen::Index n_outputs, Eigen::Index n_samples,
+                         const Eigen::MatrixXd &weights, const Eigen::VectorXd &biases)
+    : n_inputs{n_inputs}, n_outputs{n_outputs}, n_samples{n_samples}, weights(weights), biases(biases)
+{
 }
 
 Eigen::MatrixXd Layer_Dense::operator()(const Eigen::MatrixXd &inputs)

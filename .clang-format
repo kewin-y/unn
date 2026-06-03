@@ -2,5 +2,5 @@ IndentWidth: 2
 IndentAccessModifiers: false
 BreakBeforeBraces: Linux
 AccessModifierOffset: -2
-ColumnLimit: 0
+ColumnLimit: 115
 
