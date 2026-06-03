@@ -2,94 +2,67 @@ cmake_minimum_required(VERSION 3.20)
 
 project(unn VERSION 0.1.0 LANGUAGES CXX)
 
-include(CMakePackageConfigHelpers)
-include(FetchContent)
-include(GNUInstallDirs)
-
-option(UNN_BUILD_EXAMPLES "Build unn example programs" ON)
-option(UNN_FETCH_EIGEN "Fetch Eigen when it is not already installed" ON)
-
-find_package(Eigen3 CONFIG QUIET)
-
-if(NOT Eigen3_FOUND)
-  if(NOT UNN_FETCH_EIGEN)
-    message(FATAL_ERROR
-      "Eigen3 was not found. Install Eigen3 or configure with -DUNN_FETCH_EIGEN=ON."
-    )
-  endif()
-
-  FetchContent_Declare(
-    eigen
-    GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
-    GIT_TAG 3.4.0
+if(PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+  message(
+    FATAL_ERROR
+      "In-source builds not allowed. Please make a new directory (called a build directory) and run CMake from there."
   )
-  set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
-  set(EIGEN_BUILD_DOC OFF CACHE BOOL "" FORCE)
-  set(EIGEN_BUILD_PKGCONFIG OFF CACHE BOOL "" FORCE)
-  FetchContent_MakeAvailable(eigen)
 endif()
 
-add_library(unn
-  src/Layer_Dense.cpp
-  src/ReLU.cpp
-  src/Softmax.cpp
+include(cmake/CPM.cmake)
+
+CPMAddPackage("gh:TheLartians/PackageProject.cmake@1.13.0")
+CPMAddPackage(
+  NAME Eigen
+  VERSION 3.4.1
+  URL https://gitlab.com/libeigen/eigen/-/archive/3.4.1/eigen-3.4.1.tar.gz
+  DOWNLOAD_ONLY YES
 )
 
-add_library(unn::unn ALIAS unn)
+if(Eigen_ADDED)
+  add_library(Eigen INTERFACE IMPORTED)
+  target_include_directories(Eigen INTERFACE ${Eigen_SOURCE_DIR})
+endif()
 
-target_compile_features(unn PUBLIC cxx_std_17)
+set(headers
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Layer.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Layer_Dense.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Loss_CCE.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/ReLU.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Softmax.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Softmax_And_Loss_CCE.hpp
+)
 
-target_include_directories(unn
+set(sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Layer_Dense.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/ReLU.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Softmax.cpp
+)
+
+add_library(${PROJECT_NAME} ${headers} ${sources})
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
+
+# being a cross-platform target, we enforce standards conformance on MSVC
+target_compile_options(${PROJECT_NAME} PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive->")
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Eigen)
+
+target_include_directories(${PROJECT_NAME}
   PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
+    $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${PROJECT_NAME}-${PROJECT_VERSION}>
 )
 
-target_link_libraries(unn PUBLIC Eigen3::Eigen)
+string(TOLOWER ${PROJECT_NAME}/version.hpp VERSION_HEADER_LOCATION)
 
-set_target_properties(unn PROPERTIES
+packageProject(
+  NAME ${PROJECT_NAME}
   VERSION ${PROJECT_VERSION}
-  SOVERSION ${PROJECT_VERSION_MAJOR}
-  EXPORT_NAME unn
-)
-
-if(UNN_BUILD_EXAMPLES)
-  add_executable(unn_demo examples/main.cpp)
-  target_link_libraries(unn_demo PRIVATE unn::unn)
-endif()
-
-# WTF?????
-write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/unnConfigVersion.cmake"
-  VERSION ${PROJECT_VERSION}
+  NAMESPACE ${PROJECT_NAME}
+  BINARY_DIR ${PROJECT_BINARY_DIR}
+  INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
+  INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
+  VERSION_HEADER "${VERSION_HEADER_LOCATION}"
   COMPATIBILITY SameMajorVersion
-)
-
-configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/unnConfig.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/unnConfig.cmake"
-  INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/unn"
-)
-
-install(TARGETS unn
-  EXPORT unnTargets
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-install(DIRECTORY include/
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-)
-
-install(FILES
-  "${CMAKE_CURRENT_BINARY_DIR}/unnConfig.cmake"
-  "${CMAKE_CURRENT_BINARY_DIR}/unnConfigVersion.cmake"
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/unn"
-)
-
-install(EXPORT unnTargets
-  FILE unnTargets.cmake
-  NAMESPACE unn::
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/unn"
+  DEPENDENCIES "eigen 3.4.1"
 )
