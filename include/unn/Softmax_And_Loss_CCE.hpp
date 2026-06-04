@@ -9,9 +9,8 @@
 
 namespace unn
 {
-template <typename TargetType>
-struct Softmax_And_Loss_CCE : Layer {
-  Softmax_And_Loss_CCE<TargetType>(const TargetType &targets) : y_true{targets}, loss_cce{targets}, softmax(){};
+template <typename TargetType> struct Softmax_And_Loss_CCE : Layer {
+  Softmax_And_Loss_CCE(const TargetType &targets) : loss_cce{targets}, softmax(), y_true{targets} {};
 
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
@@ -21,7 +20,7 @@ struct Softmax_And_Loss_CCE : Layer {
   Softmax softmax;
 
   const TargetType y_true; // sparse -> shape(y_true) = (1, n_samples)
-                             // one hot -> shape(y_true) = (n_classes, n_samples)
+                           // one hot -> shape(y_true) = (n_classes, n_samples)
 
   Eigen::MatrixXd inputs; // shape(inputs) = (n_classes, n_samples)
 
@@ -29,8 +28,7 @@ struct Softmax_And_Loss_CCE : Layer {
   Eigen::MatrixXd d_inputs;
 
   // Helper for static_assert
-  template <typename>
-  struct always_false : std::false_type {
+  template <typename> struct always_false : std::false_type {
   };
 };
 
@@ -41,37 +39,36 @@ Eigen::MatrixXd Softmax_And_Loss_CCE<TargetType>::operator()(const Eigen::Matrix
   return loss_cce(softmax(inputs));
 }
 
-template <typename TargetType>
-void Softmax_And_Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
+template <typename TargetType> void Softmax_And_Loss_CCE<TargetType>::backward(const Eigen::MatrixXd &d_next)
 {
   // BEGIN ASSERTIONS
-  const bool valid_d_next_shape = d_next.rows() == 1 &&
-                                  d_next.cols() == inputs.cols();
-
-  assert(((valid_d_next_shape) && "d_next has invalid shape"));
+  assert(((d_next.rows() == 1 && d_next.cols() == inputs.cols()) && "d_next has invalid shape"));
   // END ASSERTIONS
 
+  // In theory, this check should work because
+  // Eigen::RowVectorXi = Eigen::Matrix<int, 1, -1> and
+  // Eigen::MatrixXd = Eigen::Matrix<double, -1, -1>
+  // Is it the best solution? Idk ask chatgpt
   if constexpr (std::is_same_v<TargetType, Eigen::RowVectorXi>) {
     Eigen::MatrixXd one_hot(inputs.rows(), inputs.cols());
     one_hot.setZero();
 
-    for (Eigen::Index i; i < inputs.cols(); ++i) {
+    for (Eigen::Index i = 0; i < inputs.cols(); ++i) {
       one_hot(y_true(i), i) = 1;
     }
 
-    d_inputs = (inputs.array() - one_hot.array()) * d_next.array();
+    d_inputs = (inputs.array() - one_hot.array()).rowwise() * d_next.row(0).array();
 
     // Normalize
     d_inputs /= inputs.cols();
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
-    d_inputs = (inputs.array() - y_true.array()) * d_next.array();
+    d_inputs = (inputs.array() - y_true.array()).rowwise() * d_next.row(0).array();
 
     // Normalize
     d_inputs /= inputs.cols();
   } else {
-    static_assert(
-        always_false<TargetType>::value,
-        "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
+    static_assert(always_false<TargetType>::value,
+                  "TargetType must be either Eigen::RowVectorXi or Eigen::MatrixXd");
   }
 }
 

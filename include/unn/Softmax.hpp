@@ -16,8 +16,8 @@ struct Softmax : Layer {
   Eigen::MatrixXd out;
 
   // BACKWARD PASS
-  Eigen::MatrixXd d_inputs;
-
+  Eigen::MatrixXd d_inputs; // Eigen::MatrixXd always has a default constructor. Fun
+                            // See https://libeigen.gitlab.io/eigen/docs-nightly/group__TutorialMatrixClass.html
 };
 } // namespace unn
 

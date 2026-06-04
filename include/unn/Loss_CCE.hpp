@@ -97,16 +97,16 @@ template <typename TargetType> void Loss_CCE<TargetType>::backward(const Eigen::
     Eigen::MatrixXd one_hot(predictions.rows(), predictions.cols());
     one_hot.setZero();
 
-    for (Eigen::Index i; i < predictions.cols(); ++i) {
+    for (Eigen::Index i = 0; i < predictions.cols(); ++i) {
       one_hot(targets(i), i) = 1;
     }
 
-    d_predictions = (-(one_hot.array() / predictions.array())).rowwise() * d_next.array();
+    d_predictions = (-(one_hot.array() / predictions.array())).rowwise() * d_next.row(0).array();
 
     // Normalize
     d_predictions /= predictions.cols();
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
-    d_predictions = (-(targets.array() / predictions.array())).rowwise() * d_next.array();
+    d_predictions = (-(targets.array() / predictions.array())).rowwise() * d_next.row(0).array();
 
     // Normalize
     d_predictions /= predictions.cols();

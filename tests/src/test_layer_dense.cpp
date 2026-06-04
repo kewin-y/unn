@@ -1,7 +1,6 @@
 #include <Eigen/Core>
 #include <doctest/doctest.h>
 #include <unn/Layer_Dense.hpp>
-#include <iostream>
 
 TEST_CASE("Layer_Dense forward pass")
 {
@@ -35,7 +34,7 @@ TEST_CASE("Layer_Dense forward pass")
 
   auto layer_outputs = layer(inputs);
 
-  CHECK((layer_outputs.isApprox(expected, 1e-4)));
+  CHECK(layer_outputs.isApprox(expected, 1e-4));
 }
 
 TEST_CASE("Layer_Dense backward pass")
@@ -88,9 +87,7 @@ TEST_CASE("Layer_Dense backward pass")
 
   layer.backward(d_next);
 
-  std::cout << layer.d_weights;
-
-  CHECK((layer.d_biases.isApprox(expected_d_biases, 1e-4)));
-  CHECK((layer.d_weights.isApprox(expected_d_weights, 1e-4)));
-  CHECK((layer.d_inputs.isApprox(expected_d_inputs, 1e-4)));
+  CHECK(layer.d_biases.isApprox(expected_d_biases, 1e-4));
+  CHECK(layer.d_weights.isApprox(expected_d_weights, 1e-4));
+  CHECK(layer.d_inputs.isApprox(expected_d_inputs, 1e-4));
 }
