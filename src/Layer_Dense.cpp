@@ -39,10 +39,14 @@ void Layer_Dense::backward(const Eigen::MatrixXd &d_next)
 
   assert(((valid_d_next_shape) && "d_next has invalid shape"));
 
-  // These formulas combine the gradient across all the samples
-  // Also keeps the shapes consistent
+
+  // This sums d_next * w across each output derivative
   d_inputs = weights.transpose() * d_next;
+
+  // This sums d_next * x across each input
   d_weights = d_next * inputs.transpose();
+
+  // Oh my gosh
   d_biases = d_next.rowwise().sum();
 }
 } // namespace unn
