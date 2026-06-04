@@ -22,7 +22,6 @@ template <typename TargetType> struct Loss_CCE : Layer {
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &predictions) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
-private:
   // FORWARD PASS
   const TargetType targets; // sparse -> shape(y_true) = (1, n_samples)
                             // one hot -> shape(y_true) = (n_classes, n_samples)

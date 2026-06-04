@@ -12,8 +12,6 @@ struct Softmax : Layer {
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
-private:
-
   // FORWARD PASS
   Eigen::MatrixXd out;
 

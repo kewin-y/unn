@@ -16,7 +16,6 @@ struct Softmax_And_Loss_CCE : Layer {
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
-private:
   // FORWARD PASS
   Loss_CCE<TargetType> loss_cce;
   Softmax softmax;

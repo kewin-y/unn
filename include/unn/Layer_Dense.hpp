@@ -14,7 +14,6 @@ struct Layer_Dense : Layer {
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
 
-private:
   // FORWARD PASS
   Eigen::MatrixXd weights; // Each row represents
                            // the weights for a specific output neuron.
