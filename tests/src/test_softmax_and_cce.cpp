@@ -2,9 +2,9 @@
 #include <Eigen/Core>
 #include <Eigen/src/Core/Matrix.h>
 #include <doctest/doctest.h>
-#include <iostream>
 
-TEST_CASE("Softmax_And_Loss_CCE backward pass")
+// This test case comes from the book
+TEST_CASE("Softmax_And_Loss_CCE backward pass from nnfs")
 {
   const Eigen::Index n_classes = 3;
   const Eigen::Index n_samples = 3;
@@ -21,10 +21,9 @@ TEST_CASE("Softmax_And_Loss_CCE backward pass")
 
   // Hmm
   softmax_cce.inputs.resize(n_classes, n_samples);
-  softmax_cce.softmax.out.resize(n_classes, n_samples);
-  softmax_cce.softmax.out << 0.7, 0.1, 0.02,
-                             0.1, 0.5, 0.9,
-                             0.2, 0.4, 0.08;
+  softmax_cce.inputs << 0.7, 0.1, 0.02,
+                        0.1, 0.5, 0.9,
+                        0.2, 0.4, 0.08;
 
   expected << -0.1,         0.03333333,  0.06666667,
                0.03333333, -0.16666667,  0.13333333,
@@ -35,6 +34,5 @@ TEST_CASE("Softmax_And_Loss_CCE backward pass")
 
   softmax_cce.backward(d_next);
 
-  std::cout << softmax_cce.d_inputs;
   CHECK(softmax_cce.d_inputs.isApprox(expected, 1e-4));
 }
