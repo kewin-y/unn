@@ -35,10 +35,12 @@ void Layer_Dense::backward(const Eigen::MatrixXd &d_next)
 {
   // Gradient from next layer should have same shape as this layer's output
   // Because `d_next` is the gradient of `outputs`
-  const bool valid_d_next_shape = d_next.rows() == inputs.rows() && d_next.cols() == inputs.cols();
+  const bool valid_d_next_shape = d_next.rows() == weights.rows() && d_next.cols() == inputs.cols();
 
   assert(((valid_d_next_shape) && "d_next has invalid shape"));
 
+  // These formulas combine the gradient across all the samples
+  // Also keeps the shapes consistent
   d_inputs = weights.transpose() * d_next;
   d_weights = d_next * inputs.transpose();
   d_biases = d_next.rowwise().sum();
