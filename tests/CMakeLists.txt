@@ -30,8 +30,8 @@ endif()
 # file(GLOB sources CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 set(sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/smoke.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/layer_dense.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/test_smoke.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/test_layer_dense.cpp
 )
 add_executable(${PROJECT_NAME} ${sources})
 target_link_libraries(${PROJECT_NAME} doctest::doctest unn::unn Eigen)
