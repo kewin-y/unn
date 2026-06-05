@@ -7,13 +7,10 @@ TEST_CASE("Softmax forward pass")
   const Eigen::Index n_classes = 3;
   const Eigen::Index n_samples = 3;
 
-  Eigen::MatrixXd d_next(1, n_samples);
   Eigen::MatrixXd logits(n_classes, n_samples);
   Eigen::MatrixXd expected(n_classes, n_samples);
 
   // clang-format off
-  d_next << 1, 1, 1;
-
   unn::Softmax softmax{};
 
   logits << 2.3, 1.2, 3.3,
