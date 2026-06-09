@@ -9,17 +9,6 @@ option(TEST_INSTALLED_VERSION "Test the version found by find_package" OFF)
 include(../cmake/CPM.cmake)
 
 CPMAddPackage("gh:doctest/doctest@2.5.2")
-CPMAddPackage(
-  NAME Eigen
-  VERSION 3.4.1
-  URL https://gitlab.com/libeigen/eigen/-/archive/3.4.1/eigen-3.4.1.tar.gz
-  DOWNLOAD_ONLY YES
-)
-
-if(Eigen_ADDED)
-  add_library(Eigen INTERFACE IMPORTED)
-  target_include_directories(Eigen INTERFACE ${Eigen_SOURCE_DIR})
-endif()
 
 if(TEST_INSTALLED_VERSION)
   find_package(unn REQUIRED)
@@ -37,7 +26,7 @@ set(sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/test_cce.cpp
 )
 add_executable(${PROJECT_NAME} ${sources})
-target_link_libraries(${PROJECT_NAME} doctest::doctest unn::unn Eigen)
+target_link_libraries(${PROJECT_NAME} doctest::doctest unn::unn)
 set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 17)
 
 # enable compiler warnings

@@ -31,7 +31,7 @@ template <typename TargetType> struct Loss_CCE : Layer {
   // BACKWARD PASS
   Eigen::MatrixXd d_predictions;
 
-  double m_average_loss;
+  double average_loss;
 
   // Helper for static_assert
   template <typename> struct always_false : std::false_type {
@@ -59,7 +59,7 @@ template <typename TargetType> Eigen::MatrixXd Loss_CCE<TargetType>::operator()(
       losses(0, i) = -y_pred_clip_log(targets(i), i);
     }
 
-    m_average_loss = losses.mean();
+    average_loss = losses.mean();
 
     return losses;
   } else if constexpr (std::is_same_v<TargetType, Eigen::MatrixXd>) {
@@ -76,7 +76,7 @@ template <typename TargetType> Eigen::MatrixXd Loss_CCE<TargetType>::operator()(
     // entries are calculated for no reason
     Eigen::MatrixXd losses = -(targets.array() * y_pred_clip_log.array()).colwise().sum();
 
-    m_average_loss = losses.mean();
+    average_loss = losses.mean();
 
     return losses;
   } else {
