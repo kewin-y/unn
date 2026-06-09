@@ -13,3 +13,4 @@ cmake -S ./all -B ./build
 - [x] rewrite the cmake file
 - [ ] write tests
     - In progress
+        - categorical cross entropy loss and softmax activation backward passes wont be used for now; will make tests later
