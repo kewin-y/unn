@@ -71,14 +71,14 @@ int main()
   // stupid
   (void)loss_activation(dense2_out);
 
-  std::cout << "Loss: " << loss_activation.loss_cce.average_loss << "\n";
+  std::cout << "Loss: " << loss_activation.get_average_loss() << "\n";
 
-  const auto out_cols = loss_activation.softmax.out.cols();
+  const auto out_cols = loss_activation.get_preds_ref().cols();
   Eigen::Index maxIndex;
   Eigen::RowVectorXi preds(out_cols);
 
-  for (int j = 0; j < loss_activation.softmax.out.cols(); j++) {
-    loss_activation.softmax.out.col(j).maxCoeff(&maxIndex);
+  for (int j = 0; j < out_cols; j++) {
+    loss_activation.get_preds_ref().col(j).maxCoeff(&maxIndex);
     preds(j) = maxIndex;
   }
 
