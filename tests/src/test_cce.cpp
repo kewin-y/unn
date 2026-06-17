@@ -19,10 +19,8 @@ TEST_CASE("Categorical Cross Entropy loss forward pass (sparse)")
   expected << 0.356674944, 0.693147181, 0.105360516;
   // clang-format on
 
-  // Hopefully this API design isn't stupid and I won't regret it
-  // It's okay though it's not that serious
-  unn::Loss_CCE loss_cce(targets);
-  const auto loss = loss_cce(predictions);
+  unn::Loss_CCE loss_cce{};
+  const auto loss = loss_cce(predictions, targets);
 
   CHECK(loss.isApprox(expected, 1e-4));
 }
@@ -48,10 +46,8 @@ TEST_CASE("Categorical Cross Entropy loss forward pass (sparse)")
   expected << 0.356674944, 0.693147181, 0.105360516;
   // clang-format on
 
-  // Hopefully this API design isn't stupid and I won't regret it
-  // It's okay though it's not that serious
-  unn::Loss_CCE loss_cce(targets);
-  const auto loss = loss_cce(predictions);
+  unn::Loss_CCE loss_cce{};
+  const auto loss = loss_cce(predictions, targets);
 
   CHECK(loss.isApprox(expected, 1e-4));
 }
