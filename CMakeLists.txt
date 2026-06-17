@@ -27,6 +27,7 @@ endif()
 set(headers
   ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Layer.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Layer_Dense.hpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Loss.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Loss_CCE.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/ReLU.hpp
   ${CMAKE_CURRENT_SOURCE_DIR}/include/unn/Softmax.hpp
@@ -36,9 +37,10 @@ set(headers
 
 set(sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Layer_Dense.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Loss_CCE.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/Optimizer_SGD.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/ReLU.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Softmax.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/Optimizer_SGD.cpp
 )
 
 add_library(${PROJECT_NAME} ${headers} ${sources})
