@@ -1,23 +1,24 @@
 #ifndef UNN_SOFTMAX_HPP
 #define UNN_SOFTMAX_HPP
 
-#include "unn/Layer.hpp"
 #include <Eigen/Core>
 
 namespace unn
 {
-struct Softmax : Layer {
+class Softmax
+{
+private:
+  Eigen::MatrixXd output;
+  Eigen::MatrixXd d_input;
+
+public:
   Softmax() = default;
 
-  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
-  void backward(const Eigen::MatrixXd &d_next) override;
-
-  // FORWARD PASS
-  Eigen::MatrixXd out;
-
-  // BACKWARD PASS
-  Eigen::MatrixXd d_inputs; // Eigen::MatrixXd always has a default constructor. Fun
-                            // See https://libeigen.gitlab.io/eigen/docs-nightly/group__TutorialMatrixClass.html
+  // Maybe? add output member to all layer classes
+  // and make the forward pass return a const ref
+  Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs);
+  void backward(const Eigen::MatrixXd &d_next);
+  const Eigen::MatrixXd &get_output() const;
 };
 } // namespace unn
 

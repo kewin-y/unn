@@ -5,10 +5,14 @@
 
 namespace unn
 {
-struct Layer {
+class Layer
+{
+protected:
+  Eigen::MatrixXd input;
+  Eigen::MatrixXd d_input;
+public:
   virtual void backward(const Eigen::MatrixXd &d_next) = 0;
-  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) = 0;
-  virtual ~Layer() = default;
+  virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd &input) = 0;
 };
 } // namespace unn
 

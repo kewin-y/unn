@@ -22,14 +22,14 @@ public:
   virtual void backward() = 0;
 
   // FORWARD PASS
-  const Eigen::MatrixXd &get_target() { return target; }
+  const Eigen::MatrixXd &get_target() const { return target; }
 
-  const Eigen::MatrixXd &get_input() { return input; } // shape(input) = (n_classes, n_samples)
+  const Eigen::MatrixXd &get_input() const { return input; } // shape(input) = (n_classes, n_samples)
 
   // BACKWARD PASS
-  const Eigen::MatrixXd &get_d_input() { return d_input; }
+  const Eigen::MatrixXd &get_d_input() const { return d_input; }
 
-  double get_average_loss() { return average_loss; }
+  double get_average_loss() const { return average_loss; }
 };
 } // namespace unn
 

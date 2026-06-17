@@ -6,8 +6,14 @@
 
 namespace unn
 {
-struct Layer_Dense : Layer {
+class Layer_Dense : public Layer
+{
+private:
+  // BACKWARD PASS
+  Eigen::MatrixXd d_weights;
+  Eigen::MatrixXd d_biases;
 
+public:
   Layer_Dense(Eigen::Index n_in, Eigen::Index n_out);
   Layer_Dense(const Eigen::MatrixXd &weights, const Eigen::VectorXd &biases);
 
@@ -21,12 +27,8 @@ struct Layer_Dense : Layer {
 
   Eigen::VectorXd biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 
-  Eigen::MatrixXd inputs; // shape(inputs) = (n_in, n_samples)
-
-  // BACKWARD PASS
-  Eigen::MatrixXd d_inputs;
-  Eigen::MatrixXd d_weights;
-  Eigen::MatrixXd d_biases;
+  const Eigen::MatrixXd &get_d_weights() const ;
+  const Eigen::MatrixXd &get_d_biases() const;
 };
 } // namespace unn
 

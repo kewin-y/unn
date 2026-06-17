@@ -18,35 +18,24 @@ Layer_Dense::Layer_Dense(const Eigen::MatrixXd &weights, const Eigen::VectorXd &
 
 Eigen::MatrixXd Layer_Dense::operator()(const Eigen::MatrixXd &inputs)
 {
-  this->inputs = inputs;
+  this->input = inputs;
 
-  const bool valid_in_rows = inputs.rows() == weights.cols();
-
-  assert(((valid_in_rows) && "inputs has invalid shape"));
-
-  auto outputs = (weights * inputs).colwise() + biases;
-
-  // shape(outputs) = (n_out, n_samples)
-  // n_out becomes number of inputs for next layer
-  return outputs;
+  return (weights * inputs).colwise() + biases;
 }
 
+// Note shape(d_next) = shape(output)
 void Layer_Dense::backward(const Eigen::MatrixXd &d_next)
 {
-  // Gradient from next layer should have same shape as this layer's output
-  // Because `d_next` is the gradient of `outputs`
-  const bool valid_d_next_shape = d_next.rows() == weights.rows() && d_next.cols() == inputs.cols();
-
-  assert(((valid_d_next_shape) && "d_next has invalid shape"));
-
-
   // This sums d_next * w across each output derivative
-  d_inputs = weights.transpose() * d_next;
+  this->d_input = weights.transpose() * d_next;
 
   // This sums d_next * x across each input
-  d_weights = d_next * inputs.transpose();
+  this->d_weights = d_next * input.transpose();
 
-  // Oh my gosh
-  d_biases = d_next.rowwise().sum();
+  this->d_biases = d_next.rowwise().sum();
 }
+
+const Eigen::MatrixXd &Layer_Dense::get_d_weights() const { return this->d_weights; }
+const Eigen::MatrixXd &Layer_Dense::get_d_biases() const { return this->d_biases; }
+
 } // namespace unn

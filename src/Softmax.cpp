@@ -17,24 +17,19 @@ Eigen::MatrixXd Softmax::operator()(const Eigen::MatrixXd &inputs)
   Eigen::RowVectorXd s = adjusted.colwise().sum();
 
   // Softmax (hopefully)
-  out = adjusted.array().rowwise() / s.array();
+  this->output = adjusted.array().rowwise() / s.array();
 
-  return out;
+  return output;
 }
 void Softmax::backward(const Eigen::MatrixXd &d_next)
 {
-  // BEGIN ASSERTIONS
-  const bool valid_d_next_shape = d_next.rows() == out.rows() &&
-                                  d_next.cols() == out.cols();
-  assert(((valid_d_next_shape) && "d_next has invalid shape"));
-  // END ASSERTIONS
+  this->d_input.resize(output.rows(), output.cols());
 
-  d_inputs.resize(out.rows(), out.cols());
-
-  for (Eigen::Index j = 0; j < out.cols(); j++) {
-    Eigen::MatrixXd jacobian = static_cast<Eigen::MatrixXd>(out.col(j).asDiagonal()) -
-                               (out.col(j) * out.col(j).transpose());
-    d_inputs.col(j) = jacobian * d_next.col(j);
+  for (Eigen::Index j = 0; j < output.cols(); j++) {
+    Eigen::MatrixXd jacobian =
+        static_cast<Eigen::MatrixXd>(output.col(j).asDiagonal()) - (output.col(j) * output.col(j).transpose());
+    this->d_input.col(j) = jacobian * d_next.col(j);
   }
 }
+const Eigen::MatrixXd &Softmax::get_output() const { return output; }
 } // namespace unn

@@ -6,17 +6,13 @@
 
 namespace unn
 {
-struct ReLU : Layer {
+class ReLU : public Layer
+{
+public:
   ReLU() = default;
 
   Eigen::MatrixXd operator()(const Eigen::MatrixXd &inputs) override;
   void backward(const Eigen::MatrixXd &d_next) override;
-
-  // Forward Pass
-  Eigen::MatrixXd inputs;
-
-  // Backward Pass
-  Eigen::MatrixXd d_inputs;
 };
 } // namespace unn
 

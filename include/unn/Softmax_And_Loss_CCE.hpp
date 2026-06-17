@@ -35,9 +35,9 @@ public:
     d_input = (softmax_out.array() - target.array()) / static_cast<double>(samples);
   }
 
-  double get_average_loss() { return loss_cce.get_average_loss(); }
-  const Eigen::MatrixXd &get_d_input() { return d_input; }
-  const Eigen::MatrixXd &get_softmax_out() const { return softmax.out; }
+  double get_average_loss() const { return loss_cce.get_average_loss(); }
+  const Eigen::MatrixXd &get_d_input() const { return d_input; }
+  const Eigen::MatrixXd &get_softmax_out() const { return softmax.get_output(); }
 };
 } // namespace unn
 
