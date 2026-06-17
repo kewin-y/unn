@@ -50,7 +50,7 @@ TEST_CASE("Layer_Dense backward pass")
   Eigen::MatrixXd d_next(n_outputs, n_samples);
 
   Eigen::VectorXd expected_d_biases(n_outputs);
-  Eigen::MatrixXd expected_d_inputs(n_inputs, n_samples);
+  Eigen::MatrixXd expected_d_input(n_inputs, n_samples);
   Eigen::MatrixXd expected_d_weights(n_outputs, n_inputs);
 
   // clang-format off
@@ -75,7 +75,7 @@ TEST_CASE("Layer_Dense backward pass")
                         6, 1, 4, 7,
                         6, 2, 5, 8;
 
-  expected_d_inputs << 9,  8,  4,
+  expected_d_input << 9,  8,  4,
                        15, 13, 6,
                        12, 11, 6,
                        9,  8,  4;
@@ -87,7 +87,7 @@ TEST_CASE("Layer_Dense backward pass")
 
   layer.backward(d_next);
 
-  CHECK(layer.d_biases.isApprox(expected_d_biases, 1e-4));
-  CHECK(layer.d_weights.isApprox(expected_d_weights, 1e-4));
-  CHECK(layer.d_inputs.isApprox(expected_d_inputs, 1e-4));
+  CHECK(layer.get_d_biases().isApprox(expected_d_biases, 1e-4));
+  CHECK(layer.get_d_weights().isApprox(expected_d_weights, 1e-4));
+  CHECK(layer.get_d_input().isApprox(expected_d_input, 1e-4));
 }

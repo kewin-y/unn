@@ -37,5 +37,4 @@ void Layer_Dense::backward(const Eigen::MatrixXd &d_next)
 
 const Eigen::MatrixXd &Layer_Dense::get_d_weights() const { return this->d_weights; }
 const Eigen::MatrixXd &Layer_Dense::get_d_biases() const { return this->d_biases; }
-
 } // namespace unn

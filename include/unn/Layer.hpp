@@ -10,9 +10,12 @@ class Layer
 protected:
   Eigen::MatrixXd input;
   Eigen::MatrixXd d_input;
+
 public:
   virtual void backward(const Eigen::MatrixXd &d_next) = 0;
   virtual Eigen::MatrixXd operator()(const Eigen::MatrixXd &input) = 0;
+
+  const Eigen::MatrixXd &get_d_input() { return d_input; }
 };
 } // namespace unn
 
