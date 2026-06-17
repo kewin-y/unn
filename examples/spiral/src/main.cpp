@@ -61,32 +61,42 @@ int main()
   unn::ReLU activation1{};
   unn::Layer_Dense dense2{64, 3};
   unn::Softmax_And_Loss_CCE loss_activation{};
-  unn::Optimizer_SGD SGD{};
+  unn::Optimizer_SGD SGD{0.2f};
 
-  // Forward Pass
-  auto dense1_out = dense1(X);
-  auto activation1_out = activation1(dense1_out);
-  auto dense2_out = dense2(activation1_out);
+  constexpr int epochs = 10001;
 
-  (void)loss_activation(dense2_out, y);
+  for (int i = 0; i < epochs; i++) {
+    // Forward Pass
+    auto dense1_out = dense1(X);
+    auto activation1_out = activation1(dense1_out);
+    auto dense2_out = dense2(activation1_out);
 
-  std::cout << "Loss: " << loss_activation.get_average_loss() << "\n";
+    (void)loss_activation(dense2_out, y);
 
-  const auto out_cols = loss_activation.get_softmax_out().cols();
-  Eigen::Index maxIndex;
-  Eigen::RowVectorXi preds(out_cols);
+    const auto out_cols = loss_activation.get_softmax_out().cols();
+    Eigen::Index maxIndex;
+    Eigen::RowVectorXi preds(out_cols);
 
-  for (int j = 0; j < out_cols; j++) {
-    loss_activation.get_softmax_out().col(j).maxCoeff(&maxIndex);
-    preds(j) = maxIndex;
+    for (int j = 0; j < out_cols; j++) {
+      loss_activation.get_softmax_out().col(j).maxCoeff(&maxIndex);
+      preds(j) = maxIndex;
+    }
+
+    int total_correct = (preds.array() == y.array()).count();
+    auto accuracy = static_cast<double>(total_correct) / static_cast<double>(out_cols);
+    if (i % 100 == 0) {
+      std::cout << "Epoch: " << i << ", Accuracy: " << accuracy << ", Loss: " << loss_activation.get_average_loss()
+                << "\n";
+    }
+    // Backward Pass
+    loss_activation.backward();
+    dense2.backward(loss_activation.get_d_input());
+    activation1.backward(dense2.get_d_input());
+    dense1.backward(activation1.get_d_input());
+
+    SGD.update_params(dense1);
+    SGD.update_params(dense2);
   }
-
-  int total_correct = (preds.array() == y.array()).count();
-  auto accuracy = static_cast<double>(total_correct) / static_cast<double>(out_cols);
-
-  std::cout << "Accuracy: " << accuracy << "\n";
-
-  // Backward Pass
 
   return 0;
 }
