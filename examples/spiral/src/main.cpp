@@ -60,7 +60,7 @@ int main()
   unn::Layer_Dense dense1{2, 64};
   unn::ReLU activation1{};
   unn::Layer_Dense dense2{64, 3};
-  unn::Softmax_And_Loss_CCE loss_activation{y};
+  unn::Softmax_And_Loss_CCE loss_activation{};
   unn::Optimizer_SGD SGD{};
 
   // Forward Pass
@@ -68,17 +68,16 @@ int main()
   auto activation1_out = activation1(dense1_out);
   auto dense2_out = dense2(activation1_out);
 
-  // stupid
-  (void)loss_activation(dense2_out);
+  (void)loss_activation(dense2_out, y);
 
   std::cout << "Loss: " << loss_activation.get_average_loss() << "\n";
 
-  const auto out_cols = loss_activation.get_preds_ref().cols();
+  const auto out_cols = loss_activation.get_softmax_out().cols();
   Eigen::Index maxIndex;
   Eigen::RowVectorXi preds(out_cols);
 
   for (int j = 0; j < out_cols; j++) {
-    loss_activation.get_preds_ref().col(j).maxCoeff(&maxIndex);
+    loss_activation.get_softmax_out().col(j).maxCoeff(&maxIndex);
     preds(j) = maxIndex;
   }
 
