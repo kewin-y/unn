@@ -27,8 +27,14 @@ public:
 
   Eigen::VectorXd biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 
+  // Momentum
+  // Intialized to 0x0
+  Eigen::MatrixXd weights_velocity;
+  Eigen::VectorXd biases_velocity;
+
   const Eigen::MatrixXd &get_d_weights() const;
   const Eigen::MatrixXd &get_d_biases() const;
+  bool velocity_initialized();
 };
 } // namespace unn
 
