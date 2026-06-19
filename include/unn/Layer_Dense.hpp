@@ -27,7 +27,7 @@ public:
 
   Eigen::VectorXd biases; // Each entry b_i of `biases` corresponds to the bias of neuron `i`
 
-  const Eigen::MatrixXd &get_d_weights() const ;
+  const Eigen::MatrixXd &get_d_weights() const;
   const Eigen::MatrixXd &get_d_biases() const;
 };
 } // namespace unn

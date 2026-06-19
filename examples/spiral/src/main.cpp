@@ -1,6 +1,6 @@
 #include "unn/Layer_Dense.hpp"
-#include "unn/Optimizer_SGD.hpp"
 #include "unn/ReLU.hpp"
+#include "unn/SGD.hpp"
 #include "unn/Softmax_And_Loss_CCE.hpp"
 #include <Eigen/Core>
 #include <cmath>
@@ -61,7 +61,7 @@ int main()
   unn::ReLU activation1{};
   unn::Layer_Dense dense2{64, 3};
   unn::Softmax_And_Loss_CCE loss_activation{};
-  unn::Optimizer_SGD SGD{0.2f};
+  unn::SGD SGD{2.0f, 1e-3};
 
   constexpr int epochs = 10001;
 
