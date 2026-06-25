@@ -38,9 +38,16 @@ void Layer_Dense::backward(const Eigen::MatrixXd &d_next)
 const Eigen::MatrixXd &Layer_Dense::get_d_weights() const { return this->d_weights; }
 const Eigen::MatrixXd &Layer_Dense::get_d_biases() const { return this->d_biases; }
 
-bool Layer_Dense::velocity_initialized()
+bool Layer_Dense::velocity_initialized() const
 {
+  // You could do *.size() != 0
   return biases_velocity.size() == biases.size() && weights_velocity.rows() == weights.rows() &&
          weights_velocity.cols() == weights.cols();
+}
+
+bool Layer_Dense::cache_initialized() const
+{
+  return biases_cache.size() == biases.size() && weights_velocity.rows() == weights.rows() &&
+         weights_cache.cols() == weights.cols();
 }
 } // namespace unn

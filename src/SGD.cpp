@@ -1,5 +1,4 @@
 #include "unn/SGD.hpp"
-#include <iostream>
 
 namespace unn
 {
@@ -14,7 +13,6 @@ void SGD::update_params(Layer_Dense &layer)
   if (momentum != 0.0) {
     // Lazily initialize layer momentum
     if (!layer.velocity_initialized()) {
-      std::cout << "Initializing Momentum" << std::endl;
       const auto biases_size = layer.biases.size();
       const auto weights_rows = layer.weights.rows();
       const auto weights_cols = layer.weights.cols();
